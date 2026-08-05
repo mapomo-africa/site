@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mapomo: Mapping Political Money</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Open-source AI that estimates campaign spending in African elections, from the signals campaigns can't hide.">
+<meta property="og:title" content="Mapomo: Mapping Political Money">
+<meta property="og:description" content="Open-source AI that estimates campaign spending in African elections.">
+<meta name="theme-color" content="#0A0F1E">
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
+<style>
+:root{--gold:#E8B13C;--ink:#0A0F1E;--txt:#E9EDF5;--mut:#8A93A6;--faint:#5A6478;--line:rgba(233,237,245,.09)}
+html,body{margin:0;padding:0;background:#0A0F1E}
+body{color:#E9EDF5;font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:var(--gold);text-decoration:none}a:hover{color:#F3CD7C}
+::selection{background:#E8B13C;color:#0A0F1E}
+@keyframes mp-cue{0%,100%{transform:translateY(0);opacity:.85}50%{transform:translateY(9px);opacity:.3}}
+@keyframes mp-kb{from{transform:scale(1)}to{transform:scale(1.07)}}
+@keyframes mp-needle{0%,100%{transform:rotate(-38deg)}45%{transform:rotate(31deg)}62%{transform:rotate(18deg)}78%{transform:rotate(26deg)}}
+.mp-dial{position:absolute;right:-4%;top:50%;transform:translateY(-50%);width:min(46vw,620px);opacity:.9;pointer-events:none}
+@media (max-width:900px){.mp-dial{display:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</head>
+<body>
+<div data-mapomo="1" style="background:var(--ink);color:var(--txt);font-family:Archivo,system-ui,sans-serif;line-height:1.2">
+
+<header data-h="topbar" style="position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:16px min(4vw,40px);transition:background .4s,border-color .4s,backdrop-filter .4s;border-bottom:1px solid transparent">
+  <a href="#top" style="display:flex;align-items:center;gap:10px;color:var(--txt)">
+    <img src="assets/logo-mark.svg" alt="" style="display:block;height:26px;width:auto">
+    <img src="assets/logo-wordmark.svg" alt="Mapomo" style="display:block;height:15px;width:auto">
+  </a>
+  <nav style="display:flex;align-items:center;gap:22px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint)">MAPPING POLITICAL MONEY</span>
+    <a href="mailto:contact@mapomo.org" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--gold);border:1px solid rgba(232,177,60,.4);padding:8px 14px;border-radius:2px" style-hover="background:rgba(232,177,60,.12);color:#F3CD7C">CONTACT</a>
+  </nav>
+</header>
+
+<section id="top" data-scene="sc-hero" data-screen-label="Act 0: Hero" style="height:280vh;position:relative">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <div data-h="hero-photo" aria-hidden="true" style="position:absolute;inset:0;overflow:hidden;opacity:.85">
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100vw,178svh);aspect-ratio:1680/945">
+        <img src="assets/hero.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;filter:brightness(.42) saturate(.5) contrast(1.06);animation:mp-kb 30s ease-in-out infinite alternate">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,15,30,.62) 0%,rgba(10,15,30,.55) 45%,rgba(10,15,30,.8) 78%,#0A0F1E 100%)"></div>
+        <div data-h="hp-box-0" style="position:absolute;left:17.4%;top:1%;width:30.8%;height:36.8%;border:1px solid var(--gold);border-radius:2px;box-shadow:0 0 40px rgba(232,177,60,.3),inset 0 0 30px rgba(232,177,60,.08)"></div>
+        <div data-h="hp-tag-0" style="position:absolute;left:17.4%;top:39.5%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.9vw,12px);letter-spacing:.08em;white-space:nowrap"><span>BILLBOARD</span><span style="color:var(--gold)">₣ · rental price</span></div>
+        <div data-h="hp-box-1" style="position:absolute;left:4%;top:41%;width:39%;height:15.5%;border:1px solid var(--gold);border-radius:2px;box-shadow:0 0 30px rgba(232,177,60,.25)"></div>
+        <div data-h="hp-tag-1" style="position:absolute;left:4%;top:58.5%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.9vw,12px);letter-spacing:.08em;white-space:nowrap"><span>POSTERS</span><span style="color:var(--gold)">₣ · print run</span></div>
+        <div data-h="hp-box-2" style="position:absolute;left:70.6%;top:60.5%;width:16%;height:17%;border:1px solid var(--gold);border-radius:2px;box-shadow:0 0 30px rgba(232,177,60,.25)"></div>
+        <div data-h="hp-tag-2" style="position:absolute;left:70.6%;top:53.5%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,.9vw,12px);letter-spacing:.08em;white-space:nowrap"><span>CONVOY</span><span style="color:var(--gold)">₣ · vehicle branding</span></div>
+      </div>
+    </div>
+    <canvas data-h="hero-cv" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+    <div style="position:relative;width:min(1100px,92vw);display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(28px,5vh,52px)">
+      <h1 data-h="hero-l1" style="margin:0;font-size:clamp(42px,8.2vw,116px);font-weight:900;letter-spacing:-.03em;line-height:1.02;text-wrap:balance">Political money<br>is invisible.</h1>
+      <p data-h="hero-l2" style="margin:0;font-size:clamp(30px,5.4vw,76px);font-weight:800;letter-spacing:-.025em;line-height:1.08;text-wrap:balance">We taught machines<br>to see its <span style="color:var(--gold)">traces</span>.</p>
+      <div data-h="hero-brand" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <img src="assets/logo-full.svg" alt="Mapomo" style="display:block;width:clamp(190px,22vw,290px);height:auto">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;color:var(--gold)">MAPPING POLITICAL MONEY</span>
+        <p style="margin:6px 0 0;max-width:560px;font-size:clamp(15px,1.6vw,18px);font-weight:400;line-height:1.55;color:var(--mut)">Open-source AI that estimates campaign spending in African elections, from the signals campaigns can't hide.</p>
+      </div>
+    </div>
+    <div data-h="hero-cue" style="position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--faint)">SCROLL</span>
+      <span style="display:block;width:1px;height:34px;background:linear-gradient(var(--gold),transparent);animation:mp-cue 2s ease-in-out infinite"></span>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 1: The Problem" style="position:relative">
+  <div style="width:min(1160px,90vw);margin:0 auto;padding:8vh 0 0">
+    <div data-reveal="up" style="display:flex;align-items:center;gap:14px">
+      <span style="width:34px;height:1px;background:var(--gold)"></span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">01 · THE PROBLEM</span>
+    </div>
+  </div>
+  <div style="min-height:82vh;display:flex;align-items:center;position:relative;overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;inset:-40px;background:url(assets/hero.jpg) center/cover no-repeat;opacity:.07;filter:blur(10px) saturate(.25) brightness(.8)"></div>
+    <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,var(--ink),transparent 30%,transparent 70%,var(--ink))"></div>
+    <div style="width:min(1160px,90vw);margin:0 auto;position:relative">
+      <p data-reveal="up" style="margin:0;max-width:19ch;font-size:clamp(32px,5.6vw,72px);font-weight:800;letter-spacing:-.025em;line-height:1.12;text-wrap:balance">Campaign spending across Africa is largely <span style="color:var(--gold)">undeclared</span>, uncapped or unchecked.</p>
+    </div>
+  </div>
+  <div style="min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(40px,8vh,84px)">
+    <div aria-label="51 African countries; only one publishes political donations online" style="width:min(1160px,90vw);display:flex;flex-wrap:wrap;gap:clamp(10px,1.4vw,18px)"><span data-reveal="fade" data-delay="0" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="28" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="56" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="84" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="112" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="140" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="168" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="196" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="224" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="252" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="280" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="308" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="336" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="364" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="392" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="420" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="448" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="476" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="504" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="532" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="560" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="588" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="616" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="644" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="672" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="700" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="728" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="756" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="784" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="812" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="840" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="868" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="896" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="924" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="952" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="980" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1008" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1036" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1064" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1092" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1120" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1148" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1176" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1204" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1232" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1260" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1288" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1316" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1344" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1372" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:rgba(233,237,245,.1);border:1px solid rgba(233,237,245,.14)"></span><span data-reveal="fade" data-delay="1400" style="width:clamp(13px,1.6vw,22px);height:clamp(13px,1.6vw,22px);background:var(--gold);box-shadow:0 0 18px rgba(232,177,60,.55)"></span></div>
+    <div style="width:min(1160px,90vw);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(24px,5vw,72px);align-items:center">
+      <div data-reveal="up" style="display:flex;align-items:baseline;gap:8px;font-weight:900;letter-spacing:-.04em;line-height:1">
+        <span style="font-size:clamp(90px,14vw,200px);color:var(--gold)">1</span>
+        <span style="font-size:clamp(50px,7vw,100px);color:var(--faint);font-weight:400">/</span>
+        <span data-h="den" style="font-size:clamp(90px,14vw,200px)">51</span>
+      </div>
+      <div data-reveal="up" data-delay="150">
+        <p style="margin:0;font-size:clamp(20px,2.4vw,30px);font-weight:500;line-height:1.4;max-width:24ch;text-wrap:pretty">Of 51 African countries, exactly one publishes political donations online.</p>
+        <p style="margin:18px 0 0;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--faint)">TRANSPARENCY INTERNATIONAL · 2025</p>
+      </div>
+    </div>
+  </div>
+  <div style="min-height:96vh;display:flex;align-items:center;position:relative;overflow:hidden">
+    <div class="mp-dial" data-reveal="fade" data-delay="350" aria-hidden="true">
+      <svg viewBox="0 0 400 400" style="width:100%;height:auto;display:block">
+        <g fill="none" stroke="rgba(233,237,245,.09)" stroke-width="1">
+          <circle cx="200" cy="200" r="188"/>
+          <circle cx="200" cy="200" r="150"/>
+          <circle cx="200" cy="200" r="86"/>
+        </g>
+        <g stroke="rgba(233,237,245,.16)" stroke-width="1">
+          <line x1="200.0" y1="34.0" x2="200.0" y2="18.0" stroke="rgba(232,177,60,.5)"/><line x1="215.2" y1="26.7" x2="215.9" y2="18.7"/><line x1="230.2" y1="28.6" x2="231.6" y2="20.8"/><line x1="245.0" y1="31.9" x2="247.1" y2="24.2"/><line x1="259.5" y1="36.5" x2="262.2" y2="29.0"/><line x1="273.5" y1="42.3" x2="276.9" y2="35.1"/><line x1="283.0" y1="56.2" x2="291.0" y2="42.4" stroke="rgba(232,177,60,.5)"/><line x1="299.8" y1="57.5" x2="304.4" y2="50.9"/><line x1="311.8" y1="66.7" x2="317.0" y2="60.6"/><line x1="323.0" y1="77.0" x2="328.7" y2="71.3"/><line x1="333.3" y1="88.2" x2="339.4" y2="83.0"/><line x1="342.5" y1="100.2" x2="349.1" y2="95.6"/><line x1="343.8" y1="117.0" x2="357.6" y2="109.0" stroke="rgba(232,177,60,.5)"/><line x1="357.7" y1="126.5" x2="364.9" y2="123.1"/><line x1="363.5" y1="140.5" x2="371.0" y2="137.8"/><line x1="368.1" y1="155.0" x2="375.8" y2="152.9"/><line x1="371.4" y1="169.8" x2="379.2" y2="168.4"/><line x1="373.3" y1="184.8" x2="381.3" y2="184.1"/><line x1="366.0" y1="200.0" x2="382.0" y2="200.0" stroke="rgba(232,177,60,.5)"/><line x1="373.3" y1="215.2" x2="381.3" y2="215.9"/><line x1="371.4" y1="230.2" x2="379.2" y2="231.6"/><line x1="368.1" y1="245.0" x2="375.8" y2="247.1"/><line x1="363.5" y1="259.5" x2="371.0" y2="262.2"/><line x1="357.7" y1="273.5" x2="364.9" y2="276.9"/><line x1="343.8" y1="283.0" x2="357.6" y2="291.0" stroke="rgba(232,177,60,.5)"/><line x1="342.5" y1="299.8" x2="349.1" y2="304.4"/><line x1="333.3" y1="311.8" x2="339.4" y2="317.0"/><line x1="323.0" y1="323.0" x2="328.7" y2="328.7"/><line x1="311.8" y1="333.3" x2="317.0" y2="339.4"/><line x1="299.8" y1="342.5" x2="304.4" y2="349.1"/><line x1="283.0" y1="343.8" x2="291.0" y2="357.6" stroke="rgba(232,177,60,.5)"/><line x1="273.5" y1="357.7" x2="276.9" y2="364.9"/><line x1="259.5" y1="363.5" x2="262.2" y2="371.0"/><line x1="245.0" y1="368.1" x2="247.1" y2="375.8"/><line x1="230.2" y1="371.4" x2="231.6" y2="379.2"/><line x1="215.2" y1="373.3" x2="215.9" y2="381.3"/><line x1="200.0" y1="366.0" x2="200.0" y2="382.0" stroke="rgba(232,177,60,.5)"/><line x1="184.8" y1="373.3" x2="184.1" y2="381.3"/><line x1="169.8" y1="371.4" x2="168.4" y2="379.2"/><line x1="155.0" y1="368.1" x2="152.9" y2="375.8"/><line x1="140.5" y1="363.5" x2="137.8" y2="371.0"/><line x1="126.5" y1="357.7" x2="123.1" y2="364.9"/><line x1="117.0" y1="343.8" x2="109.0" y2="357.6" stroke="rgba(232,177,60,.5)"/><line x1="100.2" y1="342.5" x2="95.6" y2="349.1"/><line x1="88.2" y1="333.3" x2="83.0" y2="339.4"/><line x1="77.0" y1="323.0" x2="71.3" y2="328.7"/><line x1="66.7" y1="311.8" x2="60.6" y2="317.0"/><line x1="57.5" y1="299.8" x2="50.9" y2="304.4"/><line x1="56.2" y1="283.0" x2="42.4" y2="291.0" stroke="rgba(232,177,60,.5)"/><line x1="42.3" y1="273.5" x2="35.1" y2="276.9"/><line x1="36.5" y1="259.5" x2="29.0" y2="262.2"/><line x1="31.9" y1="245.0" x2="24.2" y2="247.1"/><line x1="28.6" y1="230.2" x2="20.8" y2="231.6"/><line x1="26.7" y1="215.2" x2="18.7" y2="215.9"/><line x1="34.0" y1="200.0" x2="18.0" y2="200.0" stroke="rgba(232,177,60,.5)"/><line x1="26.7" y1="184.8" x2="18.7" y2="184.1"/><line x1="28.6" y1="169.8" x2="20.8" y2="168.4"/><line x1="31.9" y1="155.0" x2="24.2" y2="152.9"/><line x1="36.5" y1="140.5" x2="29.0" y2="137.8"/><line x1="42.3" y1="126.5" x2="35.1" y2="123.1"/><line x1="56.2" y1="117.0" x2="42.4" y2="109.0" stroke="rgba(232,177,60,.5)"/><line x1="57.5" y1="100.2" x2="50.9" y2="95.6"/><line x1="66.7" y1="88.2" x2="60.6" y2="83.0"/><line x1="77.0" y1="77.0" x2="71.3" y2="71.3"/><line x1="88.2" y1="66.7" x2="83.0" y2="60.6"/><line x1="100.2" y1="57.5" x2="95.6" y2="50.9"/><line x1="117.0" y1="56.2" x2="109.0" y2="42.4" stroke="rgba(232,177,60,.5)"/><line x1="126.5" y1="42.3" x2="123.1" y2="35.1"/><line x1="140.5" y1="36.5" x2="137.8" y2="29.0"/><line x1="155.0" y1="31.9" x2="152.9" y2="24.2"/><line x1="169.8" y1="28.6" x2="168.4" y2="20.8"/><line x1="184.8" y1="26.7" x2="184.1" y2="18.7"/>
+        </g>
+        <g fill="none" stroke="rgba(232,177,60,.35)" stroke-width="1.4">
+          <path d="M 44 290 A 180 180 0 1 1 356 290"/>
+        </g>
+        <g style="transform-origin:200px 200px;animation:mp-needle 9s cubic-bezier(.45,0,.25,1) infinite">
+          <line x1="200" y1="200" x2="200" y2="38" stroke="#E8B13C" stroke-width="1.6"/>
+          <circle cx="200" cy="200" r="5" fill="#E8B13C"/>
+          <circle cx="200" cy="200" r="11" fill="none" stroke="rgba(232,177,60,.4)" stroke-width="1"/>
+        </g>
+        <text x="200" y="258" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="3" fill="rgba(138,147,166,.7)">MEASUREMENT</text>
+        <text x="200" y="274" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" letter-spacing="3" fill="rgba(232,177,60,.65)">IN PROGRESS</text>
+      </svg>
+    </div>
+    <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(24px,4vh,40px);position:relative">
+      <p data-reveal="up" style="margin:0;font-size:clamp(22px,2.6vw,32px);font-weight:600;color:var(--mut)">Laws exist. Instruments don't.</p>
+      <p data-reveal="up" data-delay="120" style="margin:0;font-family:Newsreader,serif;font-style:italic;font-weight:400;font-size:clamp(34px,5.8vw,74px);line-height:1.15;letter-spacing:-.01em;max-width:18ch;text-wrap:balance">A law without an instrument is a poem.</p>
+      <p data-reveal="up" data-delay="260" style="margin:0;font-size:clamp(26px,3.6vw,46px);font-weight:800;letter-spacing:-.02em">We're building <span style="color:var(--gold)">the instrument</span>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-scene="sc-city" data-screen-label="Act 2: The Insight" style="height:340vh;position:relative">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;padding:76px 0 0">
+    <div style="width:min(1160px,92vw);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="width:34px;height:1px;background:var(--gold)"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">02 · THE INSIGHT</span>
+      </div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint)">MONEY HIDES. ITS TRACES DON'T.</span>
+    </div>
+    <div style="position:relative;width:min(1160px,92vw);aspect-ratio:16/9.4;min-height:340px;max-height:62svh;background:linear-gradient(180deg,#0C1326 0%,#0E1730 78%,#121C36 100%);border:1px solid var(--line);border-radius:2px;overflow:hidden">
+      <div style="position:absolute;left:0;right:0;bottom:15%;height:1px;background:rgba(233,237,245,.14)"></div>
+      <div style="position:absolute;bottom:15%;left:2%;width:7%;height:24%;background:#131E38"></div>
+      <div style="position:absolute;bottom:15%;left:10.2%;width:5.4%;height:38%;background:#16223F"></div>
+      <div style="position:absolute;bottom:15%;left:16.8%;width:8%;height:17%;background:#121B33"></div>
+      <div style="position:absolute;bottom:15%;left:36%;width:6.4%;height:31%;background:#131E38"></div>
+      <div style="position:absolute;bottom:15%;left:43.6%;width:9%;height:47%;background:#16223F"></div>
+      <div style="position:absolute;bottom:15%;left:53.8%;width:5.6%;height:22%;background:#121B33"></div>
+      <div style="position:absolute;bottom:15%;left:60.6%;width:7.6%;height:36%;background:#131E38"></div>
+      <div style="position:absolute;bottom:15%;left:87%;width:9%;height:28%;background:#16223F"></div>
+      <div style="position:absolute;top:34%;left:44.9%;width:2px;height:20%;background:#1B2A4C"></div>
+      <div style="position:absolute;top:47%;left:48.6%;width:2px;height:14%;background:#1B2A4C"></div>
+      <div data-h="tr-bill" style="position:absolute;top:16%;left:21%;width:23%;height:17%;background:#18264A;border:1px solid rgba(233,237,245,.16);border-radius:3px">
+        <div style="position:absolute;left:24%;top:100%;width:2px;height:52%;background:#1B2A4C"></div>
+        <div style="position:absolute;right:24%;top:100%;width:2px;height:52%;background:#1B2A4C"></div>
+        <div style="position:absolute;left:12%;top:26%;right:34%;height:7px;background:rgba(233,237,245,.22);border-radius:2px"></div>
+        <div style="position:absolute;left:12%;top:52%;right:52%;height:7px;background:rgba(233,237,245,.13);border-radius:2px"></div>
+        <div data-h="ov-bill" style="position:absolute;inset:-1px;border:1px solid var(--gold);border-radius:3px;box-shadow:0 0 34px rgba(232,177,60,.35),inset 0 0 22px rgba(232,177,60,.14)"></div>
+      </div>
+      <div data-h="tr-rally" style="position:absolute;left:8%;bottom:15.5%;width:26%;height:16%">
+        <div data-h="crowd" style="position:absolute;inset:0"></div>
+        <div style="position:absolute;left:47%;bottom:0;width:6px;height:46%;background:#1E2C50;border-radius:0"></div>
+      </div>
+      <div data-h="tr-radio" style="position:absolute;right:12.5%;bottom:15.5%;width:16%;height:56%">
+        <div style="position:absolute;left:50%;bottom:0;width:3px;height:74%;background:#22315A;transform:translateX(-50%)"></div>
+        <div style="position:absolute;left:50%;bottom:52%;width:26%;height:2px;background:#22315A;transform:translateX(-50%)"></div>
+        <div style="position:absolute;left:50%;bottom:36%;width:40%;height:2px;background:#22315A;transform:translateX(-50%)"></div>
+        <span style="position:absolute;left:50%;top:16%;width:10px;height:10px;background:var(--gold);transform:translate(-50%,-50%)"></span>
+        <div data-h="ov-radio" style="position:absolute;left:50%;top:16%;width:0;height:0;transform:translate(-50%,-50%)">
+        </div>
+      </div>
+      <div data-h="tr-post" style="position:absolute;right:31%;bottom:19%;width:7.2%;min-width:52px;aspect-ratio:9/15.5;background:#101A36;border:1px solid rgba(233,237,245,.18);border-radius:2px;padding:7% 8%">
+        <div style="width:52%;height:5px;background:rgba(233,237,245,.22);border-radius:2px;margin-bottom:14%"></div>
+        <div style="width:100%;height:34%;background:rgba(232,177,60,.16);border:1px solid rgba(232,177,60,.3);border-radius:3px"></div>
+        <div style="width:84%;height:4px;background:rgba(233,237,245,.14);border-radius:2px;margin-top:12%"></div>
+        <div style="width:66%;height:4px;background:rgba(233,237,245,.10);border-radius:2px;margin-top:8%"></div>
+        <div data-h="ov-post" style="position:absolute;inset:-1px;border:1px solid var(--gold);border-radius:2px;box-shadow:0 0 30px rgba(232,177,60,.35)"></div>
+      </div>
+      <div data-h="tag-0" style="position:absolute;top:7%;left:23%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,1vw,12px);letter-spacing:.08em"><span>BILLBOARD</span><span style="color:var(--gold)">₣ · rental price</span></div>
+      <div data-h="tag-1" style="position:absolute;left:9%;bottom:36%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,1vw,12px);letter-spacing:.08em"><span>RALLY</span><span style="color:var(--gold)">₣ · cost per attendee</span></div>
+      <div data-h="tag-2" style="position:absolute;right:4%;top:14%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,1vw,12px);letter-spacing:.08em"><span>RADIO</span><span style="color:var(--gold)">₣ · rate card</span></div>
+      <div data-h="tag-3" style="position:absolute;right:24%;bottom:48%;display:flex;align-items:center;gap:8px;background:rgba(7,11,22,.88);border:1px solid rgba(232,177,60,.55);border-radius:2px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:clamp(9px,1vw,12px);letter-spacing:.08em"><span>SPONSORED POST</span><span style="color:var(--gold)">₣ · ad library</span></div>
+    </div>
+    <p style="margin:0;width:min(1160px,92vw);font-size:clamp(15px,1.9vw,21px);font-weight:500;line-height:1.5;color:var(--txt)"><span data-h="cap-0">A billboard has a rental price.</span> <span data-h="cap-1">A rally has a cost per person.</span> <span data-h="cap-2">A radio spot has a rate card.</span> <span data-h="cap-3">A sponsored post sits in an ad library.</span></p>
+  </div>
+</section>
+
+<section data-screen-label="Act 2: Count the traces" style="min-height:100vh;display:flex;align-items:center">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:10px">
+    <p data-reveal="up" style="margin:0;font-size:clamp(34px,5.8vw,78px);font-weight:900;letter-spacing:-.03em;line-height:1.06">Count the traces.</p>
+    <p data-reveal="up" data-delay="140" style="margin:0;font-size:clamp(34px,5.8vw,78px);font-weight:900;letter-spacing:-.03em;line-height:1.06">Know the costs.</p>
+    <p data-reveal="up" data-delay="280" style="margin:0;font-size:clamp(34px,5.8vw,78px);font-weight:900;letter-spacing:-.03em;line-height:1.06;color:var(--gold)">Estimate the money.</p>
+  </div>
+</section>
+
+<section data-scene="sc-pipe" data-screen-label="Act 3: How it works" style="height:260vh;position:relative">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center">
+    <div style="width:min(1160px,92vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(28px,6vh,64px)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="width:34px;height:1px;background:var(--gold)"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">03 · HOW IT WORKS</span>
+      </div>
+      <div style="position:relative">
+        <div style="position:absolute;top:22px;left:0;right:0;height:1px;background:var(--line)"></div>
+        <div data-h="pipe-line" style="position:absolute;top:22px;left:0;height:1px;width:100%;background:var(--gold);transform-origin:left;box-shadow:0 0 12px rgba(232,177,60,.5)"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:clamp(18px,2.4vw,34px);position:relative">
+          <div data-h="step-0" style="display:flex;flex-direction:column;gap:14px;padding-top:2px">
+            <span style="width:44px;height:44px;background:var(--ink);border:1px solid rgba(232,177,60,.6);display:flex;align-items:center;justify-content:center"><span style="width:10px;height:10px;background:var(--gold)"></span></span>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--gold)">01 OBSERVE</div>
+            <p style="margin:0;font-size:clamp(14px,1.5vw,17px);line-height:1.55;color:var(--mut);text-wrap:pretty">Public signals: online ads, billboards, rallies, radio.</p>
+          </div>
+          <div data-h="step-1" style="display:flex;flex-direction:column;gap:14px;padding-top:2px">
+            <span style="width:44px;height:44px;background:var(--ink);border:1px solid rgba(232,177,60,.6);display:flex;align-items:flex-end;justify-content:center;gap:2px;padding-bottom:13px"><span style="width:3px;height:8px;background:var(--gold)"></span><span style="width:3px;height:16px;background:var(--gold)"></span><span style="width:3px;height:11px;background:var(--gold)"></span><span style="width:3px;height:18px;background:var(--gold)"></span><span style="width:3px;height:7px;background:var(--gold)"></span></span>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--gold)">02 DETECT</div>
+            <p style="margin:0;font-size:clamp(14px,1.5vw,17px);line-height:1.55;color:var(--mut);text-wrap:pretty">AI models count and classify, including African-language speech recognition.</p>
+          </div>
+          <div data-h="step-2" style="display:flex;flex-direction:column;gap:14px;padding-top:2px">
+            <span style="width:44px;height:44px;background:var(--ink);border:1px solid rgba(232,177,60,.6);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--gold)">×</span>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--gold)">03 ESTIMATE</div>
+            <p style="margin:0;font-size:clamp(14px,1.5vw,17px);line-height:1.55;color:var(--mut);text-wrap:pretty">Counts × real unit costs, calibrated by researchers on the ground.</p>
+          </div>
+          <div data-h="step-3" style="display:flex;flex-direction:column;gap:14px;padding-top:2px">
+            <span style="width:44px;height:44px;background:var(--ink);border:1px solid rgba(232,177,60,.6);display:flex;align-items:flex-end;justify-content:center;gap:5px;padding-bottom:12px"><span style="width:7px;height:19px;background:var(--gold)"></span><span style="width:7px;height:8px;background:var(--faint)"></span></span>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;color:var(--gold)">04 COMPARE</div>
+            <p style="margin:0;font-size:clamp(14px,1.5vw,17px);line-height:1.55;color:var(--mut);text-wrap:pretty">Estimates set against what campaigns officially declare.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 3: The gap" style="min-height:110vh;display:flex;align-items:center;background:linear-gradient(180deg,var(--ink),#0C1226 55%,var(--ink))">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(32px,6vw,90px);align-items:center;padding:10vh 0">
+    <div style="display:flex;align-items:flex-end;gap:clamp(28px,4vw,56px);height:300px">
+      <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:12px;height:100%">
+        <div data-reveal="bar" data-th="230" style="width:clamp(72px,9vw,110px);height:230px;background:linear-gradient(180deg,var(--gold),#B98A26);border-radius:0;box-shadow:0 0 40px rgba(232,177,60,.25)"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold)">ESTIMATED</span>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:12px;height:100%">
+        <div data-reveal="bar" data-th="84" style="width:clamp(72px,9vw,110px);height:84px;background:#232F4E;border-radius:0"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--faint)">DECLARED</span>
+      </div>
+      <div data-reveal="fade" data-delay="700" style="display:flex;flex-direction:column;justify-content:flex-start;height:100%;padding-top:32px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:26px;height:1px;background:var(--gold)"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold)">THE GAP</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <h2 data-reveal="up" style="margin:0;font-size:clamp(38px,5.2vw,72px);font-weight:900;letter-spacing:-.03em;line-height:1.04;text-wrap:balance">The gap is <span style="color:var(--gold)">the signal</span>.</h2>
+      <p data-reveal="up" data-delay="150" style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:clamp(12px,1.3vw,14px);line-height:1.8;letter-spacing:.04em;color:var(--mut);max-width:46ch">Mapomo publishes estimates with full methodology, not verdicts. Humans verify; AI counts.</p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 4: The four tools" style="padding:16vh 0">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(30px,5vh,52px)">
+    <div data-reveal="up" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="width:34px;height:1px;background:var(--gold)"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">04 · THE TOOLS</span>
+      </div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--faint)">IN BUILD · FIRST DEPLOYMENTS 2026 TO 2027</span>
+    </div>
+    <h2 data-reveal="up" style="margin:0;font-size:clamp(30px,4.4vw,56px);font-weight:800;letter-spacing:-.025em;max-width:22ch;text-wrap:balance">One suite. Four ways to see the money.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(16px,2vw,24px)">
+      <div data-reveal="up" style="background:#0E1730;border:1px solid var(--line);border-radius:2px;padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:18px" style-hover="border-color:rgba(232,177,60,.45)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:grid;grid-template-columns:repeat(5,8px);gap:5px"><span style="width:8px;height:8px;background:#26355C"></span><span style="width:8px;height:8px;background:var(--gold)"></span><span style="width:8px;height:8px;background:#26355C"></span><span style="width:8px;height:8px;background:#26355C"></span><span style="width:8px;height:8px;background:var(--gold)"></span><span style="width:8px;height:8px;background:var(--gold)"></span><span style="width:8px;height:8px;background:#26355C"></span><span style="width:8px;height:8px;background:#26355C"></span><span style="width:8px;height:8px;background:var(--gold)"></span><span style="width:8px;height:8px;background:#26355C"></span></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold);border:1px solid rgba(232,177,60,.35);border-radius:2px;padding:4px 9px">IN BUILD</span>
+        </div>
+        <h3 style="margin:0;font-size:clamp(19px,2vw,24px);font-weight:700;letter-spacing:-.01em">Ad Spend Tracker</h3>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:var(--mut);text-wrap:pretty">Measures online political ad spending, platform by platform.</p>
+      </div>
+      <div data-reveal="up" data-delay="100" style="background:#0E1730;border:1px solid var(--line);border-radius:2px;padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:18px" style-hover="border-color:rgba(232,177,60,.45)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:flex-end;gap:5px;height:21px"><span style="width:8px;height:7px;background:#26355C"></span><span style="width:8px;height:12px;background:#26355C"></span><span style="width:8px;height:16px;background:var(--gold)"></span><span style="width:8px;height:21px;background:var(--gold)"></span></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold);border:1px solid rgba(232,177,60,.35);border-radius:2px;padding:4px 9px">IN BUILD</span>
+        </div>
+        <h3 style="margin:0;font-size:clamp(19px,2vw,24px);font-weight:700;letter-spacing:-.01em">Campaign Visibility Index</h3>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:var(--mut);text-wrap:pretty">Converts ground presence (billboards, rallies, posters) into money via real unit costs.</p>
+      </div>
+      <div data-reveal="up" data-delay="200" style="background:#0E1730;border:1px solid var(--line);border-radius:2px;padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:18px" style-hover="border-color:rgba(232,177,60,.45)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="position:relative;width:64px;height:22px"><span style="position:absolute;left:0;top:7px;width:9px;height:9px;background:var(--gold)"></span><span style="position:absolute;left:28px;top:0;width:9px;height:9px;background:#26355C"></span><span style="position:absolute;left:54px;top:12px;width:9px;height:9px;background:#26355C"></span><span style="position:absolute;left:8px;top:10px;width:22px;height:1px;background:#33406A;transform:rotate(-14deg);transform-origin:left"></span><span style="position:absolute;left:35px;top:6px;width:21px;height:1px;background:#33406A;transform:rotate(26deg);transform-origin:left"></span></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold);border:1px solid rgba(232,177,60,.35);border-radius:2px;padding:4px 9px">IN BUILD</span>
+        </div>
+        <h3 style="margin:0;font-size:clamp(19px,2vw,24px);font-weight:700;letter-spacing:-.01em">Money Flow Mapper</h3>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:var(--mut);text-wrap:pretty">Maps the networks behind political financing.</p>
+      </div>
+      <div data-reveal="up" data-delay="300" style="background:#0E1730;border:1px solid var(--line);border-radius:2px;padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:18px" style-hover="border-color:rgba(232,177,60,.45)">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:3px;height:22px"><span style="width:3px;height:6px;background:#26355C"></span><span style="width:3px;height:12px;background:#26355C"></span><span style="width:3px;height:20px;background:var(--gold)"></span><span style="width:3px;height:9px;background:var(--gold)"></span><span style="width:3px;height:16px;background:#26355C"></span><span style="width:3px;height:5px;background:#26355C"></span><span style="width:3px;height:13px;background:var(--gold)"></span></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold);border:1px solid rgba(232,177,60,.35);border-radius:2px;padding:4px 9px">IN BUILD</span>
+        </div>
+        <h3 style="margin:0;font-size:clamp(19px,2vw,24px);font-weight:700;letter-spacing:-.01em">Local Language AI</h3>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:var(--mut);text-wrap:pretty">Speech recognition and analysis for Wolof, Pulaar and Hausa radio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-scene="sc-wave" data-screen-label="Act 5: The Languages" style="height:300vh;position:relative">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center">
+    <canvas data-h="wave-cv" aria-hidden="true" style="position:absolute;left:0;right:0;top:50%;width:100%;height:220px;transform:translateY(-50%);opacity:.9"></canvas>
+    <div style="position:relative;width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(22px,4vh,38px)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="width:34px;height:1px;background:var(--gold)"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">05 · THE LANGUAGES</span>
+      </div>
+      <p data-h="wv-b1" style="margin:0;font-size:clamp(26px,3.8vw,48px);font-weight:800;letter-spacing:-.02em;max-width:24ch;text-wrap:balance">African elections happen in African languages.</p>
+      <p data-h="wv-b2" style="margin:0;font-size:clamp(17px,2vw,24px);font-weight:500;line-height:1.5;color:var(--mut);max-width:44ch;text-wrap:pretty">On radio in <span style="color:var(--txt)">Wolof</span>. In rallies in <span style="color:var(--txt)">Hausa</span>. In songs in <span style="color:var(--txt)">Pulaar</span>. Tools that only read English miss the story.</p>
+      <div data-h="wv-card" style="align-self:flex-start;max-width:min(640px,100%);background:rgba(7,11,22,.85);border:1px solid var(--line);border-radius:2px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;backdrop-filter:blur(4px)">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--faint)">RADIO · WOLOF · LIVE TRANSCRIPTION</div>
+        <p style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.5vw,16px);line-height:1.7;color:var(--txt)">« <span data-h="wl-line">…tey ci rajo bi, ñu ngi wax ci <span style="color:var(--gold);background:rgba(232,177,60,.14);border-radius:3px;padding:0 3px">kampaañ bi</span> ci diiwaan bi…</span> »</p>
+        <div data-h="wl-chip" style="display:flex;align-items:center;gap:8px;align-self:flex-start;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:5px 10px">DETECTED · CAMPAIGN MENTION (ILLUSTRATIVE)</div>
+      </div>
+      <p data-h="wv-end" style="margin:0;font-size:clamp(28px,4.6vw,58px);font-weight:900;letter-spacing:-.025em;line-height:1.08;max-width:20ch;text-wrap:balance">Mapomo listens in the languages <span style="color:var(--gold)">democracy actually speaks</span>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-scene="sc-map" data-screen-label="Act 6: Map" style="height:280vh;position:relative">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center">
+    <div style="width:min(1160px,92vw);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(24px,4vw,64px);align-items:center">
+      <div style="display:flex;flex-direction:column;gap:clamp(18px,3vh,30px)">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="width:34px;height:1px;background:var(--gold)"></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">06 · WHERE &amp; WHEN</span>
+        </div>
+        <h2 style="margin:0;font-size:clamp(30px,4.6vw,58px);font-weight:900;letter-spacing:-.03em;line-height:1.05">Six countries.<br>Built for a continent.</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span data-h="chip-0" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">SENEGAL</span>
+          <span data-h="chip-1" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">NIGERIA</span>
+          <span data-h="chip-2" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">GHANA</span>
+          <span data-h="chip-3" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">KENYA</span>
+          <span data-h="chip-4" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">SOUTH AFRICA</span>
+          <span data-h="chip-5" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:2px;padding:7px 12px;color:var(--mut)">DR CONGO</span>
+        </div>
+        <p data-h="map-line" style="margin:0;font-family:Newsreader,serif;font-style:italic;font-size:clamp(19px,2.2vw,26px);line-height:1.4;color:var(--mut);max-width:30ch">Built in Dakar. Tested where it's hardest. Made for a continent.</p>
+      </div>
+      <div data-h="map-wrap" style="position:relative;width:100%;max-width:560px;justify-self:center;aspect-ratio:1/1.02;min-height:320px">
+        <canvas data-h="map-cv" aria-label="Map of Africa with Mapomo's six countries highlighted" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        <div data-h="ml-0" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">SENEGAL</div>
+        <div data-h="ml-1" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">NIGERIA</div>
+        <div data-h="ml-2" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">GHANA</div>
+        <div data-h="ml-3" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">KENYA</div>
+        <div data-h="ml-4" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">SOUTH AFRICA</div>
+        <div data-h="ml-5" style="position:absolute;transform:translate(-50%,-130%);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold);background:rgba(7,11,22,.85);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:3px 6px;white-space:nowrap">DR CONGO</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 6: Timeline" style="padding:14vh 0 16vh">
+  <div style="width:min(900px,90vw);margin:0 auto;position:relative;display:flex;flex-direction:column;gap:clamp(40px,7vh,64px)">
+    <div data-reveal="line" style="position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,var(--gold),rgba(232,177,60,.15))"></div>
+    <div data-reveal="up" style="display:flex;gap:clamp(20px,3vw,36px)">
+      <span style="flex:none;width:10px;height:10px;background:var(--gold);margin-top:9px"></span>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">NOV 2026 · SOUTH AFRICA</div>
+        <div style="font-size:clamp(21px,2.6vw,30px);font-weight:700;margin-top:8px">Municipal elections</div>
+        <div style="font-size:15px;color:var(--mut);margin-top:6px">Remote data run</div>
+      </div>
+    </div>
+    <div data-reveal="up" data-delay="80" style="display:flex;gap:clamp(20px,3vw,36px)">
+      <span style="flex:none;width:10px;height:10px;background:var(--gold);margin-top:9px"></span>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">FEB 2027 · NIGERIA</div>
+        <div style="font-size:clamp(21px,2.6vw,30px);font-weight:700;margin-top:8px">General elections</div>
+        <div style="font-size:15px;color:var(--mut);margin-top:6px">First full deployment</div>
+      </div>
+    </div>
+    <div data-reveal="up" data-delay="160" style="display:flex;gap:clamp(20px,3vw,36px)">
+      <span style="flex:none;width:10px;height:10px;background:var(--gold);margin-top:9px"></span>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">AUG 2027 · KENYA</div>
+        <div style="font-size:clamp(21px,2.6vw,30px);font-weight:700;margin-top:8px">General elections</div>
+      </div>
+    </div>
+    <div data-reveal="up" data-delay="240" style="display:flex;gap:clamp(20px,3vw,36px)">
+      <span style="flex:none;width:10px;height:10px;background:var(--gold);margin-top:9px"></span>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">2027 · SENEGAL</div>
+        <div style="font-size:clamp(21px,2.6vw,30px);font-weight:700;margin-top:8px">Field validation campaign</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 7: The Lab" style="background:#F2EDE3;color:#171A16;padding:16vh 0">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(28px,5vh,44px)">
+    <div data-reveal="up" style="display:flex;align-items:center;gap:14px">
+      <span style="width:34px;height:1px;background:#9A7415"></span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:#9A7415">07 · THE LAB</span>
+    </div>
+    <h2 data-reveal="up" style="margin:0;font-size:clamp(34px,5.6vw,76px);font-weight:900;letter-spacing:-.03em;line-height:1.05;max-width:18ch;text-wrap:balance"><span style="color:#9A7415">25 African experts.</span> 5 days. Dakar, September 2026.</h2>
+    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(17px,2vw,23px);line-height:1.55;color:#565248;max-width:52ch;text-wrap:pretty">Journalists, data scientists, election lawyers, field observers and civic technologists co-design the tools, so Mapomo is built by the people who will use it.</p>
+    <div data-reveal="up" data-delay="200" style="width:100%;aspect-ratio:16/7.5;min-height:260px;position:relative">
+      <div style="position:absolute;inset:0;border:1px dashed rgba(23,26,22,.3);border-radius:2px;background:rgba(23,26,22,.04);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;color:#8A8474">LAB PHOTOGRAPHY. REAL IMAGES LAND HERE AFTER DAKAR, OCT 2026</span></div>
+    </div>
+    <p data-reveal="fade" style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8474">PHOTOGRAPHY ARRIVES AFTER THE LAB · THIS SPACE IS DESIGNED FOR IT</p>
+  </div>
+</section>
+
+<section data-screen-label="Act 8: Open Source" style="min-height:90vh;display:flex;align-items:center;padding:12vh 0">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(24px,4vh,38px)">
+    <div data-reveal="up" style="display:flex;align-items:center;gap:14px">
+      <span style="width:34px;height:1px;background:var(--gold)"></span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">08 · OPEN SOURCE</span>
+    </div>
+    <h2 data-reveal="up" style="margin:0;font-size:clamp(30px,4.8vw,64px);font-weight:900;letter-spacing:-.03em;line-height:1.08;max-width:20ch;text-wrap:balance">Everything Mapomo builds is published: <span style="color:var(--gold)">code, models, methodology</span>.</h2>
+    <p data-reveal="up" data-delay="140" style="margin:0;font-family:Newsreader,serif;font-style:italic;font-size:clamp(20px,2.6vw,30px);line-height:1.4;color:var(--mut);max-width:34ch;text-wrap:pretty">Because infrastructure for democracy shouldn't have an owner. It should have a community.</p>
+    <div data-reveal="up" data-delay="240" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <a href="https://github.com/mapomo-africa" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(232,177,60,.4);border-radius:2px;padding:12px 20px" style-hover="background:rgba(232,177,60,.12);color:#F3CD7C">GITHUB.COM/MAPOMO-AFRICA<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+      <a href="mailto:contact@mapomo.org?subject=Follow%20the%20build" style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;color:var(--gold);padding:12px 4px" style-hover="color:#F3CD7C">FOLLOW THE BUILD →</a>
+    </div>
+    <div data-reveal="up" data-delay="320" style="display:flex;flex-wrap:wrap;gap:12px">
+      <a href="https://github.com/mapomo-africa/schemas" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:2px;padding:9px 14px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">SCHEMAS · THE OUTPUT CONTRACT</a>
+      <a href="https://github.com/mapomo-africa/methodology" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:2px;padding:9px 14px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">METHODOLOGY</a>
+      <a href="https://github.com/mapomo-africa/reference-data" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:2px;padding:9px 14px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">REFERENCE DATA</a>
+      <a href="https://github.com/mapomo-africa/mapomo/blob/main/GOVERNANCE.md" target="_blank" rel="noopener" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:2px;padding:9px 14px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">GOVERNANCE</a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Act 9: Who's behind" style="padding:10vh 0 14vh">
+  <div style="width:min(860px,90vw);margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(22px,4vh,34px)">
+    <div data-reveal="up" style="display:flex;align-items:center;gap:14px">
+      <span style="width:34px;height:1px;background:var(--gold)"></span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--gold)">09 · WHO'S BEHIND</span>
+      <span style="width:34px;height:1px;background:var(--gold)"></span>
+    </div>
+    <div data-reveal="up" style="font-weight:900;font-size:clamp(22px,2.8vw,32px);letter-spacing:.3em">ANDAKIA</div>
+    <p data-reveal="up" data-delay="100" style="margin:0;font-size:clamp(16px,1.9vw,21px);line-height:1.6;color:var(--mut);max-width:54ch;text-wrap:pretty">Mapomo is built by ANDAKIA, an African AI company based in Dakar, makers of production AI in Wolof, Pulaar and Hausa, working with major institutions across the continent.</p>
+    <p data-reveal="fade" data-delay="220" style="margin:0;font-family:Newsreader,serif;font-style:italic;font-size:clamp(18px,2.2vw,25px);color:var(--txt)">Supported by a grant from the Open Society Foundations.</p>
+  </div>
+</section>
+
+<section data-screen-label="Contact CTA" style="border-top:1px solid var(--line);background:linear-gradient(180deg,var(--ink),#0D1428);padding:16vh 0">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(20px,4vh,32px)">
+    <h2 data-reveal="up" style="margin:0;font-size:clamp(40px,7vw,96px);font-weight:900;letter-spacing:-.035em;line-height:1">Work <span style="color:var(--gold)">with us</span>.</h2>
+    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(16px,2vw,22px);line-height:1.55;color:var(--mut);max-width:46ch;text-wrap:pretty">Experts, researchers and partners. Mapomo is built with the people who will use it. The Lab convenes in Dakar this September.</p>
+    <div data-reveal="up" data-delay="220" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <a href="mailto:contact@mapomo.org" style="display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#0A0F1E;font-weight:700;font-size:clamp(15px,1.6vw,18px);letter-spacing:.01em;border-radius:2px;padding:16px 28px" style-hover="background:#F3CD7C;color:#0A0F1E">contact@mapomo.org<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
+      <a href="mailto:contact@mapomo.org?subject=Follow%20the%20build" style="display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;color:var(--txt);border:1px solid var(--line);border-radius:2px;padding:15px 24px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">FOLLOW THE BUILD</a>
+    </div>
+  </div>
+</section>
+
+<footer data-screen-label="Footer" style="border-top:1px solid var(--line);padding:36px 0 44px">
+  <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="assets/logo-mark.svg" alt="" style="display:block;height:22px;width:auto">
+      <img src="assets/logo-wordmark.svg" alt="Mapomo" style="display:block;height:13px;width:auto">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)">© ANDAKIA 2026 · mapomo.org</span>
+    </div>
+    <nav style="display:flex;align-items:center;gap:20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em">
+      <a href="mailto:contact@mapomo.org" style="color:var(--mut)" style-hover="color:var(--gold)">CONTACT@MAPOMO.ORG</a>
+      <a href="https://github.com/mapomo-africa" target="_blank" rel="noopener" style="color:var(--mut)" style-hover="color:var(--gold)">GITHUB</a>
+      <span style="color:var(--faint)">LINKEDIN</span>
+      <span style="color:var(--faint)">X</span>
+    </nav>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--faint)">NO TRACKERS · NO COOKIES</span>
+  </div>
+</footer>
+</div>
+<script>
+// style-hover attributes -> generated :hover rules
+(() => {
+  const ss = document.createElement('style'); document.head.appendChild(ss);
+  let i = 0;
+  document.querySelectorAll('[style-hover]').forEach(el => {
+    const cls = 'hv' + (i++); el.classList.add(cls);
+    const decl = el.getAttribute('style-hover').split(';').filter(Boolean).map(d => d + ' !important').join(';');
+    ss.sheet.insertRule('.' + cls + ':hover{' + decl + '}');
+  });
+})();
+</script>
+<script>
+class Mapomo {
+  constructor() { this.props = { signalColor: "#E8B13C", motion: "full" }; this.componentDidMount(); }
+  componentDidMount() { this._raf0 = requestAnimationFrame(() => this.boot()); }
+  componentDidUpdate() { this.applyTheme(); }
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf0); cancelAnimationFrame(this._loop);
+    removeEventListener('scroll', this._onScroll); removeEventListener('resize', this._onResize);
+    if (this._io) this._io.disconnect();
+    clearInterval(this._mapPoll);
+  }
+  boot() {
+    this.root = document.querySelector('[data-mapomo]');
+    if (!this.root) { this._raf0 = requestAnimationFrame(() => this.boot()); return; }
+    this.H = {}; this.root.querySelectorAll('[data-h]').forEach(e => { this.H[e.dataset.h] = e; });
+    this.applyTheme();
+    this.calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (this.props.motion ?? 'full') === 'calm';
+    this.t = 0; this.heroVis = true; this.waveVis = false; this.waveP = 0; this.heroP = 0; this.mapAct = this.calm ? 6 : 0; this._mapDrawn = -1;
+    this.buildCrowd();
+    this.initReveals();
+    this.initScenes();
+    this.setupHeroCanvas(); this.setupWaveCanvas(); this.initMap();
+    if (!this.calm) {
+      this._onScroll = () => { this._dirty = true; };
+      this._onResize = () => { this.sizeHero(); this.sizeWave(); this._dirty = true; };
+      addEventListener('scroll', this._onScroll, { passive: true });
+      addEventListener('resize', this._onResize);
+      this._dirty = true;
+      const loop = () => { this.t += 0.016; if (this._dirty) { this._dirty = false; this.update(); } this.drawHero(); this.drawWave(); this._loop = requestAnimationFrame(loop); };
+      this._loop = requestAnimationFrame(loop);
+    } else {
+      this.calmStates();
+      const loop = () => { this.t += 0.016; this._loop = requestAnimationFrame(loop); };
+      this.drawHero(1); this.drawWave(1);
+    }
+  }
+  applyTheme() {
+    const r = document.querySelector('[data-mapomo]'); if (!r) return;
+    document.documentElement.style.setProperty('--gold', this.props.signalColor ?? '#E8B13C');
+  }
+  renderVals() { return {}; }
+
+  // ---------- helpers ----------
+  CL(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  P(p, a, b) { return this.CL((p - a) / (b - a), 0, 1); }
+  EZ(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  S(el, o) { if (!el) return; for (const k in o) el.style[k] = o[k]; }
+
+  // ---------- reveals ----------
+  initReveals() {
+    const els = [...this.root.querySelectorAll('[data-reveal]')];
+    if (this.calm) return;
+    els.forEach(el => {
+      const t = el.dataset.reveal;
+      el.style.transition = 'none';
+      if (t === 'up') { el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; }
+      if (t === 'fade') { el.style.opacity = '0'; }
+      if (t === 'bar') { el.dataset.thFinal = el.dataset.th; el.style.height = '6px'; }
+      if (t === 'line') { el.style.transform = 'scaleY(0)'; el.style.transformOrigin = 'top'; }
+    });
+    this._io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const el = en.target, t = el.dataset.reveal, d = +(el.dataset.delay || 0);
+        this._io.unobserve(el);
+        requestAnimationFrame(() => {
+          if (t === 'bar') { el.style.transition = 'height 1.2s cubic-bezier(.2,.7,.2,1) ' + d + 'ms'; el.style.height = el.dataset.thFinal + 'px'; }
+          else if (t === 'line') { el.style.transition = 'transform 1.6s cubic-bezier(.2,.7,.2,1) ' + d + 'ms'; el.style.transform = 'scaleY(1)'; }
+          else { el.style.transition = 'opacity .85s cubic-bezier(.2,.6,.2,1) ' + d + 'ms, transform .85s cubic-bezier(.2,.6,.2,1) ' + d + 'ms'; el.style.opacity = '1'; el.style.transform = 'none'; }
+          if (el.querySelector && el.querySelector('[data-h="den"]') || el.dataset.h === 'den') this.countUp();
+        });
+      });
+    }, { threshold: 0.18 });
+    els.forEach(el => this._io.observe(el));
+    const denWrap = this.H['den'] && this.H['den'].closest('[data-reveal]');
+    if (denWrap) { /* countUp triggered above */ }
+  }
+  countUp() {
+    if (this._counted || !this.H['den']) return; this._counted = true;
+    const el = this.H['den'], t0 = performance.now(), dur = 1400;
+    const step = now => { const p = this.CL((now - t0) / dur, 0, 1); el.textContent = Math.max(1, Math.round(this.EZ(p) * 51)); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+
+  // ---------- scenes ----------
+  initScenes() {
+    this.scenes = [];
+    const reg = (key, fn) => { const el = this.root.querySelector('[data-scene="' + key + '"]'); if (el) this.scenes.push({ el, fn }); };
+    reg('sc-hero', p => this.scHero(p)); reg('sc-city', p => this.scCity(p)); reg('sc-pipe', p => this.scPipe(p)); reg('sc-wave', p => this.scWave(p)); reg('sc-map', p => this.scMap(p));
+    if (this.calm) return;
+    const H = this.H;
+    this.S(H['hero-l2'], { opacity: 0, transform: 'translateY(26px)' });
+    for (let i = 0; i < 3; i++) { this.S(H['hp-box-' + i], { opacity: 0 }); this.S(H['hp-tag-' + i], { opacity: 0, transform: 'translateY(8px)' }); }
+    this.S(H['hero-brand'], { opacity: 0, transform: 'translateY(26px)' });
+    for (let i = 0; i < 4; i++) { this.S(H['tag-' + i], { opacity: 0, transform: 'translateY(10px)', transition: 'none' }); this.S(H['cap-' + i], { color: 'var(--faint)', transition: 'color .5s' }); }
+    this.S(H['ov-bill'], { opacity: 0 }); this.S(H['ov-radio'], { opacity: 0 }); this.S(H['ov-post'], { opacity: 0 });
+    this.S(H['pipe-line'], { transform: 'scaleX(0)' });
+    for (let i = 0; i < 4; i++) this.S(H['step-' + i], { opacity: .18, transform: 'translateY(16px)', transition: 'none' });
+    this.S(H['wv-b2'], { opacity: 0, transform: 'translateY(20px)' });
+    this.S(H['wv-card'], { opacity: 0, transform: 'translateY(20px)' });
+    this.S(H['wv-end'], { opacity: 0, transform: 'translateY(24px)' });
+    this.S(H['wl-chip'], { opacity: 0 });
+    if (H['wl-line']) { this.wlFull = H['wl-line'].innerHTML; this.wlA = '…tey ci rajo bi, ñu ngi wax ci '; this.wlB = 'kampaañ bi'; this.wlC = ' ci diiwaan bi…'; H['wl-line'].textContent = ''; }
+    for (let i = 0; i < 6; i++) { this.S(H['ml-' + i], { opacity: 0 }); this.S(H['chip-' + i], { transition: 'color .5s,border-color .5s' }); }
+    this.S(H['map-line'], { opacity: 0, transform: 'translateY(14px)', transition: 'opacity .8s,transform .8s' });
+  }
+  calmStates() {
+    const H = this.H;
+    if (H['topbar']) this.S(H['topbar'], { background: 'rgba(9,13,26,.8)', backdropFilter: 'blur(10px)', borderColor: 'var(--line)' });
+    for (let i = 0; i < 6; i++) this.S(H['chip-' + i], { color: 'var(--gold)', borderColor: 'rgba(232,177,60,.5)' });
+  }
+  update() {
+    const vh = innerHeight;
+    for (const s of this.scenes) {
+      const r = s.el.getBoundingClientRect();
+      const den = s.el.offsetHeight - vh;
+      const p = den > 0 ? this.CL(-r.top / den, 0, 1) : (r.top < vh ? 1 : 0);
+      s.vis = r.bottom > -40 && r.top < vh + 40;
+      s.fn(p, s.vis);
+    }
+    if (this.H['topbar']) {
+      const on = scrollY > vh * 1.6;
+      this.S(this.H['topbar'], { background: on ? 'rgba(9,13,26,.78)' : 'transparent', backdropFilter: on ? 'blur(10px)' : 'none', borderColor: on ? 'var(--line)' : 'transparent' });
+    }
+  }
+  scHero(p, vis) {
+    this.heroVis = vis; this.heroP = p;
+    const H = this.H, P = this.P.bind(this);
+    const a = P(p, .14, .3);
+    this.S(H['hero-l1'], { opacity: 1 - a, transform: 'translateY(' + (-44 * a) + 'px)', filter: 'blur(' + (6 * a) + 'px)' });
+    const b = P(p, .24, .44), dim = P(p, .6, .78);
+    this.S(H['hero-l2'], { opacity: b * (1 - .8 * dim), transform: 'translateY(' + (26 * (1 - b) - 30 * dim) + 'px)' });
+    const c = P(p, .64, .84);
+    this.S(H['hero-brand'], { opacity: c, transform: 'translateY(' + (26 * (1 - c)) + 'px)' });
+    this.S(H['hero-cue'], { opacity: 1 - P(p, .02, .08) });
+    const dth = [.28, .36, .44];
+    for (let i = 0; i < 3; i++) {
+      const d = P(p, dth[i], dth[i] + .1) * (1 - P(p, .62, .78));
+      this.S(H['hp-box-' + i], { opacity: d });
+      this.S(H['hp-tag-' + i], { opacity: d, transform: 'translateY(' + (8 * (1 - d)) + 'px)' });
+    }
+    this.S(H['hero-photo'], { opacity: .85 - .55 * c });
+  }
+  scCity(p) {
+    const H = this.H, P = this.P.bind(this);
+    const th = [.14, .34, .54, .74], ovs = ['ov-bill', null, 'ov-radio', 'ov-post'];
+    for (let i = 0; i < 4; i++) {
+      const a = P(p, th[i], th[i] + .1);
+      this.S(H['tag-' + i], { opacity: a, transform: 'translateY(' + (10 * (1 - a)) + 'px)' });
+      if (ovs[i]) this.S(H[ovs[i]], { opacity: a });
+      if (H['cap-' + i]) H['cap-' + i].style.color = a > .5 ? (P(p, th[i] + .1, (th[i + 1] || 1.2)) < 1 ? 'var(--gold)' : 'var(--txt)') : 'var(--faint)';
+      if (i === 1 && this.crowd) this.crowd.forEach((d, j) => { d.style.background = (j / this.crowd.length) < a ? 'var(--gold)' : 'rgba(233,237,245,.3)'; });
+    }
+    for (let i = 0; i < 3; i++) if (H['cap-' + i] && P(p, th[i + 1], th[i + 1] + .1) > .5 && H['cap-' + i].style.color !== 'var(--txt)') H['cap-' + i].style.color = 'var(--txt)';
+  }
+  scPipe(p) {
+    const H = this.H, P = this.P.bind(this);
+    const th = [.08, .28, .48, .68];
+    this.S(H['pipe-line'], { transform: 'scaleX(' + this.EZ(P(p, .08, .82)) + ')' });
+    for (let i = 0; i < 4; i++) {
+      const a = this.EZ(P(p, th[i], th[i] + .14));
+      this.S(H['step-' + i], { opacity: .18 + .82 * a, transform: 'translateY(' + (16 * (1 - a)) + 'px)' });
+    }
+  }
+  scWave(p, vis) {
+    this.waveVis = vis; this.waveP = p;
+    const H = this.H, P = this.P.bind(this);
+    const b2 = P(p, .12, .24); this.S(H['wv-b2'], { opacity: b2, transform: 'translateY(' + (20 * (1 - b2)) + 'px)' });
+    const cd = P(p, .3, .4); this.S(H['wv-card'], { opacity: cd, transform: 'translateY(' + (20 * (1 - cd)) + 'px)' });
+    if (H['wl-line'] && this.wlFull) {
+      const tp = P(p, .38, .66), total = this.wlA.length + this.wlB.length + this.wlC.length, n = Math.floor(tp * total);
+      if (n >= total) { if (H['wl-line'].innerHTML !== this.wlFull) H['wl-line'].innerHTML = this.wlFull; }
+      else {
+        const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        let html = esc(this.wlA.slice(0, n));
+        if (n > this.wlA.length) html = esc(this.wlA) + '<span style="color:var(--gold);background:rgba(232,177,60,.14);border-radius:3px;padding:0 3px">' + esc(this.wlB.slice(0, n - this.wlA.length)) + '</span>';
+        if (n > this.wlA.length + this.wlB.length) html += esc(this.wlC.slice(0, n - this.wlA.length - this.wlB.length));
+        H['wl-line'].innerHTML = html + '<span style="color:var(--gold)">▏</span>';
+      }
+      this.S(H['wl-chip'], { opacity: P(p, .68, .76) });
+    }
+    const e = P(p, .8, .92); this.S(H['wv-end'], { opacity: e, transform: 'translateY(' + (24 * (1 - e)) + 'px)' });
+  }
+  scMap(p) {
+    const act = this.EZ(this.P(p, .06, .78)) * 6;
+    if (Math.abs(act - this.mapAct) > .02) { this.mapAct = act; this.drawMap(); }
+    const H = this.H;
+    for (let i = 0; i < 6; i++) {
+      const a = this.CL(this.mapAct - i, 0, 1);
+      this.S(H['ml-' + i], { opacity: a });
+      if (H['chip-' + i]) { H['chip-' + i].style.color = a > .6 ? 'var(--gold)' : 'var(--mut)'; H['chip-' + i].style.borderColor = a > .6 ? 'rgba(232,177,60,.5)' : 'var(--line)'; }
+    }
+    const l = this.P(p, .82, .92);
+    this.S(H['map-line'], { opacity: l, transform: 'translateY(' + (14 * (1 - l)) + 'px)' });
+  }
+
+  // ---------- crowd ----------
+  buildCrowd() {
+    const c = this.H['crowd']; if (!c) return;
+    this.crowd = [];
+    let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    for (let i = 0; i < 52; i++) {
+      const s = document.createElement('span');
+      const x = rnd() * 96, y = 28 + Math.pow(rnd(), .6) * 70, sz = 3 + rnd() * 3.4;
+      s.style.cssText = 'position:absolute;left:' + x + '%;top:' + y + '%;width:' + sz + 'px;height:' + sz + 'px;background:' + (this.calm ? 'var(--gold)' : 'rgba(233,237,245,.3)');
+      c.appendChild(s); this.crowd.push(s);
+    }
+  }
+
+  // ---------- hero canvas ----------
+  setupHeroCanvas() {
+    const cv = this.H['hero-cv']; if (!cv) return;
+    this.hcv = cv; this.hctx = cv.getContext('2d');
+    let seed = 42; this.hrnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    this.pts = [];
+    for (let i = 0; i < 80; i++) this.pts.push({ x: this.hrnd(), y: this.hrnd(), vx: (this.hrnd() - .5) * .00022, vy: (this.hrnd() - .5) * .00022, r: .8 + this.hrnd() * 1.6, tw: this.hrnd() * 6.28, g: this.hrnd() < .3 });
+    this.sizeHero();
+  }
+  sizeHero() {
+    const cv = this.hcv; if (!cv) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect();
+    cv.width = r.width * dpr; cv.height = r.height * dpr; this.hdpr = dpr;
+  }
+  drawHero(force) {
+    if (!this.hctx || (!this.heroVis && !force)) return;
+    const ctx = this.hctx, w = this.hcv.width, h = this.hcv.height;
+    const I = force ? .7 : .25 + .75 * this.heroP;
+    ctx.clearRect(0, 0, w, h);
+    const gold = this.props.signalColor ?? '#E8B13C';
+    ctx.save();
+    ctx.strokeStyle = 'rgba(233,237,245,' + (.05 + .05 * I) + ')'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    const yc = h * .5, T = this.t;
+    for (let x = 0; x <= w; x += 6) {
+      const u = x / w;
+      const env = Math.sin(u * Math.PI);
+      const y = yc + env * (Math.sin(u * 22 + T * 1.4) * 14 + Math.sin(u * 53 - T * 2.2) * 8 + Math.sin(u * 9 + T * .7) * 22) * this.hdpr * (.4 + .9 * I);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    for (const p of this.pts) {
+      if (!force) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > 1) p.vx *= -1; if (p.y < 0 || p.y > 1) p.vy *= -1; }
+      const tw = .5 + .5 * Math.sin(this.t * 1.3 + p.tw);
+      const a = (p.g ? .25 + .55 * I : .12 + .18 * I) * tw;
+      ctx.fillStyle = p.g ? this.hexA(gold, a) : 'rgba(233,237,245,' + a + ')';
+      ctx.beginPath(); ctx.arc(p.x * w, p.y * h, p.r * this.hdpr, 0, 6.283); ctx.fill();
+    }
+    if (I > .35) {
+      ctx.strokeStyle = this.hexA(gold, .05 + .09 * I); ctx.lineWidth = .6;
+      for (let i = 0; i < this.pts.length; i += 2) {
+        const a = this.pts[i], b = this.pts[(i * 7 + 13) % this.pts.length];
+        const dx = (a.x - b.x) * w, dy = (a.y - b.y) * h;
+        if (dx * dx + dy * dy < (w * .09) * (w * .09)) { ctx.beginPath(); ctx.moveTo(a.x * w, a.y * h); ctx.lineTo(b.x * w, b.y * h); ctx.stroke(); }
+      }
+    }
+    ctx.restore();
+  }
+  hexA(hex, a) {
+    const n = parseInt(hex.slice(1), 16), r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255;
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + this.CL(a, 0, 1) + ')';
+  }
+
+  // ---------- wave canvas ----------
+  setupWaveCanvas() {
+    const cv = this.H['wave-cv']; if (!cv) return;
+    this.wcv = cv; this.wctx = cv.getContext('2d');
+    this.sizeWave();
+  }
+  sizeWave() {
+    const cv = this.wcv; if (!cv) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect();
+    cv.width = r.width * dpr; cv.height = r.height * dpr; this.wdpr = dpr;
+  }
+  drawWave(force) {
+    if (!this.wctx || (!this.waveVis && !force)) return;
+    const ctx = this.wctx, w = this.wcv.width, h = this.wcv.height, yc = h / 2;
+    const gold = this.props.signalColor ?? '#E8B13C';
+    const ph = force ? .55 : this.waveP;
+    ctx.clearRect(0, 0, w, h);
+    const n = 150, bw = w / n;
+    for (let i = 0; i < n; i++) {
+      const u = i / n;
+      const amp = (Math.sin(u * 31 + this.t * 2.1) * .4 + Math.sin(u * 83 - this.t * 3.3) * .3 + Math.sin(u * 7 + this.t) * .3);
+      const H2 = (6 + Math.abs(amp) * (h * .42)) * (u < ph ? 1 : .45);
+      const on = u < ph;
+      ctx.fillStyle = on ? this.hexA(gold, .5 + .3 * Math.abs(amp)) : 'rgba(233,237,245,.13)';
+      ctx.fillRect(i * bw + bw * .2, yc - H2 / 2, bw * .5, H2);
+    }
+    ctx.fillStyle = this.hexA(gold, .9);
+    ctx.fillRect(ph * w - 1, yc - h * .34, 2, h * .68);
+  }
+
+  // ---------- map ----------
+  initMap() {
+    const cv = this.H['map-cv']; if (!cv) return;
+    let tries = 0;
+    this._mapPoll = setInterval(() => {
+      tries++;
+      if (window.d3 && window.topojson) { clearInterval(this._mapPoll); this.buildMap(); }
+      else if (tries > 50) clearInterval(this._mapPoll);
+    }, 200);
+  }
+  async buildMap() {
+    try {
+      const topo = await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')).json();
+      const AFR = new Set(['012','024','204','072','854','108','132','120','140','148','174','178','180','384','262','818','226','232','748','231','266','270','288','324','624','404','426','430','434','450','454','466','478','480','504','508','516','562','566','646','678','686','690','694','706','710','728','729','768','788','800','834','894','716','732']);
+      const feats = topojson.feature(topo, topo.objects.countries).features.filter(f => AFR.has(String(f.id).padStart(3, '0')));
+      const wrap = this.H['map-wrap'], w = wrap.clientWidth, h = wrap.clientHeight;
+      const proj = d3.geoMercator().fitExtent([[8, 8], [w - 8, h - 8]], { type: 'FeatureCollection', features: feats });
+      const path = d3.geoPath(proj);
+      const targets = ['686', '566', '288', '404', '710', '180'];
+      const boxes = feats.map(f => ({ f, id: String(f.id).padStart(3, '0'), b: path.bounds(f) }));
+      const step = Math.max(7, w / 64);
+      const dots = [];
+      for (let y = step / 2; y < h; y += step) for (let x = step / 2; x < w; x += step) {
+        const ll = proj.invert([x, y]); if (!ll) continue;
+        for (const bx of boxes) {
+          if (x < bx.b[0][0] - 2 || x > bx.b[1][0] + 2 || y < bx.b[0][1] - 2 || y > bx.b[1][1] + 2) continue;
+          if (d3.geoContains(bx.f, ll)) { dots.push({ x, y, t: targets.indexOf(bx.id) }); break; }
+        }
+      }
+      this.mapDots = dots;
+      targets.forEach((id, i) => {
+        const bx = boxes.find(b => b.id === id); if (!bx) return;
+        const c = path.centroid(bx.f);
+        const lb = this.H['ml-' + i]; if (lb) { lb.style.left = c[0] + 'px'; lb.style.top = c[1] + 'px'; }
+      });
+      const cv = this.H['map-cv'], dpr = Math.min(devicePixelRatio || 1, 2);
+      cv.width = w * dpr; cv.height = h * dpr; this.mdpr = dpr;
+      this._mapDrawn = -1; this.drawMap();
+    } catch (e) { console.warn('map load failed', e); }
+  }
+  drawMap() {
+    const cv = this.H['map-cv']; if (!cv || !this.mapDots) return;
+    if (Math.abs((this._mapDrawn ?? -1) - this.mapAct) < .02) return;
+    this._mapDrawn = this.mapAct;
+    const ctx = cv.getContext('2d'), dpr = this.mdpr, gold = this.props.signalColor ?? '#E8B13C';
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (const d of this.mapDots) {
+      const x = d.x * dpr, y = d.y * dpr;
+      if (d.t < 0) { ctx.fillStyle = 'rgba(233,237,245,.13)'; ctx.beginPath(); ctx.arc(x, y, 1.4 * dpr, 0, 6.283); ctx.fill(); }
+      else {
+        const a = this.CL(this.mapAct - d.t, 0, 1);
+        if (a > 0) { ctx.fillStyle = this.hexA(gold, .1 * a); ctx.beginPath(); ctx.arc(x, y, 3.6 * dpr * a, 0, 6.283); ctx.fill(); }
+        ctx.fillStyle = a > 0 ? this.hexA(gold, .3 + .7 * a) : 'rgba(233,237,245,.3)';
+        ctx.beginPath(); ctx.arc(x, y, (1.5 + 1 * a) * dpr, 0, 6.283); ctx.fill();
+      }
+    }
+  }
+}
+new Mapomo();
+</script>
+</body>
+</html>

@@ -8,13 +8,26 @@ oversight.
 
 ## Deployment
 
-Cloudflare Pages, built from `main`.
+GitHub Pages, served from `main`. Live at
+[mapomo-africa.github.io/site](https://mapomo-africa.github.io/site/).
+
+There is no build step and no CI transform: what is in `main` is what is served.
+That is deliberate. A landing page for a transparency project should be as
+auditable as the rest of the project, and a reader who wants to check that the
+page says what the repository says should not have to reason about a pipeline.
+
+To point mapomo.org at it, add a `CNAME` file containing `mapomo.org` and set the
+DNS records GitHub gives you under Settings, Pages.
 
 ## Structure
 
-Single-page scroll narrative. Assets in `assets/`. No build step: the page is
-plain HTML, CSS and JavaScript so that it stays legible and auditable, which
-matters more here than the convenience of a framework.
+Single-page scroll narrative in `index.html`, with assets in `assets/`. Plain
+HTML, CSS and JavaScript, no framework and no bundler, so the page stays legible
+and auditable.
+
+`logo.svg` is the source lockup as exported from Illustrator. The three files in
+`assets/` are derived from it: the stacked lockup, the mark alone, and the
+wordmark alone, recoloured for the dark background.
 
 ## Brand assets
 
