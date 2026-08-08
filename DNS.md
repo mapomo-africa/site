@@ -94,3 +94,44 @@ Both should return 200 and serve this site rather than the parking page.
 Under the organization settings, GitHub offers domain verification. Verifying
 `mapomo.org` prevents anyone else from claiming it on GitHub Pages if a record
 is ever left dangling. It costs one TXT record and closes a real takeover route.
+
+---
+
+# Mail: Google Workspace
+
+Done on 8 August 2026. `contact@mapomo.org` is published in every public
+repository and on the site, so these records are not optional.
+
+| Type | Name | Priority | Value |
+|---|---|---|---|
+| MX | @ | 1 | smtp.google.com |
+| TXT | @ | | v=spf1 include:_spf.google.com ~all |
+
+The single `smtp.google.com` MX record is the current Google Workspace setup.
+Domains onboarded before 2023 use five records starting with `aspmx`; both work,
+but do not mix them.
+
+`~all` rather than `-all` is Google's own recommendation: a soft fail marks
+unlisted senders as spam instead of rejecting outright, which avoids silently
+dropping legitimate mail sent through a service nobody remembered to list.
+
+## Still to do in the Workspace admin console
+
+**DKIM is not set up.** Generate the key under Apps, Google Workspace, Gmail,
+Authenticate email, then publish the TXT record it gives you at
+`google._domainkey`. This cannot be done from the registrar alone because the key
+is generated per domain in the console.
+
+This matters more than usual here: a DMARC record at `p=quarantine` was already
+present on the domain before any mail was configured. With SPF now in place,
+direct sends from Workspace align and pass. Anything sent on the domain's behalf
+by a third party, a newsletter tool or a ticketing system, will not, and will go
+to quarantine until DKIM exists and that sender is listed.
+
+## Checking
+
+```bash
+dig +short MX mapomo.org
+dig +short TXT mapomo.org | grep spf1
+dig +short TXT google._domainkey.mapomo.org   # empty until DKIM is set up
+```
