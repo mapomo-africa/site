@@ -26,6 +26,16 @@ a{color:var(--gold);text-decoration:none}a:hover{color:#F3CD7C}
 .mp-dial{position:absolute;right:-4%;top:50%;transform:translateY(-50%);width:min(46vw,620px);opacity:.9;pointer-events:none}
 @media (max-width:900px){.mp-dial{display:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+.mp-team{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:clamp(22px,3vw,34px) clamp(14px,2vw,24px)}
+.mp-p{min-width:0}
+.mp-ph{aspect-ratio:4/5;background:#E5DDCD;border-radius:2px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.mp-ph img{display:block;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.04);transition:filter .5s}
+.mp-p:hover .mp-ph img{filter:none}
+.mp-ph span{font-weight:900;font-size:clamp(28px,3vw,38px);letter-spacing:-.02em;color:#B9A57A}
+.mp-n{font-weight:700;font-size:16px;line-height:1.25;color:#171A16}
+.mp-r{font-size:14px;line-height:1.4;color:#565248;margin-top:4px;text-wrap:pretty}
+.mp-c{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#9A7415;margin-top:8px}
+@media (max-width:420px){.mp-team{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -399,12 +409,39 @@ a{color:var(--gold);text-decoration:none}a:hover{color:#F3CD7C}
       <span style="width:34px;height:1px;background:#9A7415"></span>
       <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:#9A7415">07 · THE LAB</span>
     </div>
-    <h2 data-reveal="up" style="margin:0;font-size:clamp(34px,5.6vw,76px);font-weight:900;letter-spacing:-.03em;line-height:1.05;max-width:18ch;text-wrap:balance"><span style="color:#9A7415">25 African experts.</span> 5 days. Dakar, September 2026.</h2>
-    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(17px,2vw,23px);line-height:1.55;color:#565248;max-width:52ch;text-wrap:pretty">Journalists, data scientists, election lawyers, field observers and civic technologists co-design the tools, so Mapomo is built by the people who will use it.</p>
-    <div data-reveal="up" data-delay="200" style="width:100%;aspect-ratio:16/7.5;min-height:260px;position:relative">
-      <div style="position:absolute;inset:0;border:1px dashed rgba(23,26,22,.3);border-radius:2px;background:rgba(23,26,22,.04);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;color:#8A8474">LAB PHOTOGRAPHY. REAL IMAGES LAND HERE AFTER DAKAR, OCT 2026</span></div>
+    <h2 data-reveal="up" style="margin:0;font-size:clamp(34px,5.6vw,76px);font-weight:900;letter-spacing:-.03em;line-height:1.05;max-width:18ch;text-wrap:balance"><span style="color:#9A7415">25 African experts.</span> 5 days. Saly, Senegal, September 2026.</h2>
+    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(17px,2vw,23px);line-height:1.55;color:#565248;max-width:52ch;text-wrap:pretty">Journalists, data scientists, auditors, election observers and engineers put the tools and the method to the test, so Mapomo is built by the people who will use it.</p>
+    <div data-reveal="up" data-delay="200" style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;border-top:1px solid rgba(23,26,22,.18);padding-top:22px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;color:#9A7415">THE PARTICIPANTS · 25</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8474">EACH CONTRIBUTED IN A PERSONAL CAPACITY</span>
     </div>
-    <p data-reveal="fade" style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#8A8474">PHOTOGRAPHY ARRIVES AFTER THE LAB · THIS SPACE IS DESIGNED FOR IT</p>
+    <ul data-reveal="up" data-delay="260" class="mp-team">
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/ikechukwu-chukwu.jpg" alt="Ikechukwu Chukwu" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Ikechukwu Chukwu</div><div class="mp-r">Election observation methods</div><div class="mp-c">NIGERIA</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">MD</span></div><div class="mp-n">Mamadou Diagne</div><div class="mp-r">Public data, Wolof speech processing</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">HD</span></div><div class="mp-n">Habib Diallo</div><div class="mp-r">Financial investigation</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">ID</span></div><div class="mp-n">Ibrahima Diallo</div><div class="mp-r">Applied AI engineering</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/babacar-gueye-diop.jpg" alt="Babacar Guèye Diop" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Babacar Guèye Diop</div><div class="mp-r">Country research, campaign prices</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/ayoba-faye.jpg" alt="Ayoba Faye" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Ayoba Faye</div><div class="mp-r">Fact-checking and field verification</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">FF</span></div><div class="mp-n">Fatou Ndiaye Faye</div><div class="mp-r">Procurement and price comparison</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">SF</span></div><div class="mp-n">Seynabou Faye</div><div class="mp-r">Applied AI engineering</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">NG</span></div><div class="mp-n">Nafissatou Goudiaby</div><div class="mp-r">Data quality and price series</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">MG</span></div><div class="mp-n">Mame Bineta Gueye</div><div class="mp-r">Supplier pricing and collection</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/modou-gueye.jpg" alt="Dr Modou Gueye" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Dr Modou Gueye</div><div class="mp-r">Extrapolation and uncertainty</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">MK</span></div><div class="mp-n">Mamoune Ka</div><div class="mp-r">Campaign management and media buying</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">DL</span></div><div class="mp-n">Dieynaba Leurs</div><div class="mp-r">Event logistics costs</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">DL</span></div><div class="mp-n">Djim Momar Lo</div><div class="mp-r">Applied AI engineering</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">AM</span></div><div class="mp-n">Arame Sarr Mbaye</div><div class="mp-r">Media advertising market</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">IM</span></div><div class="mp-n">Inssa Toure Mountakha</div><div class="mp-r">Applied AI engineering</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/ruth-kutemba-ndongo.jpg" alt="Ruth Kutemba Ndongo" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Ruth Kutemba Ndongo</div><div class="mp-r">Country research, campaign prices</div><div class="mp-c">DR CONGO</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/malala-raonitsoa.jpg" alt="Malala Raonitsoa" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Malala Raonitsoa</div><div class="mp-r">Campaign spending estimation</div><div class="mp-c">MADAGASCAR</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">AS</span></div><div class="mp-n">Athandiwe Saba</div><div class="mp-r">Investigative data journalism, OSINT</div><div class="mp-c">SOUTH AFRICA</div></li>
+      <li class="mp-p"><div class="mp-ph"><img src="assets/lab/stefan-sande.jpg" alt="Stefan Sande" width="480" height="600" loading="lazy" decoding="async"></div><div class="mp-n">Stefan Sande</div><div class="mp-r">Election observation methods</div><div class="mp-c">NIGERIA</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">BS</span></div><div class="mp-n">Babacar Sarr</div><div class="mp-r">Audit and documentary evidence</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">KS</span></div><div class="mp-n">Khadija Seck</div><div class="mp-r">Campaign operations</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">OT</span></div><div class="mp-n">Oumou Kalla Tall</div><div class="mp-r">Event services and billing</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">MT</span></div><div class="mp-n">Mazamesso Clément Teou</div><div class="mp-r">UX and interface design</div><div class="mp-c">SENEGAL</div></li>
+      <li class="mp-p"><div class="mp-ph"><span aria-hidden="true">MT</span></div><div class="mp-n">Mouhamed Thiam</div><div class="mp-r">Technical architecture and operations</div><div class="mp-c">SENEGAL</div></li>
+    </ul>
   </div>
 </section>
 
@@ -445,7 +482,7 @@ a{color:var(--gold);text-decoration:none}a:hover{color:#F3CD7C}
 <section data-screen-label="Contact CTA" style="border-top:1px solid var(--line);background:linear-gradient(180deg,var(--ink),#0D1428);padding:16vh 0">
   <div style="width:min(1160px,90vw);margin:0 auto;display:flex;flex-direction:column;gap:clamp(20px,4vh,32px)">
     <h2 data-reveal="up" style="margin:0;font-size:clamp(40px,7vw,96px);font-weight:900;letter-spacing:-.035em;line-height:1">Work <span style="color:var(--gold)">with us</span>.</h2>
-    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(16px,2vw,22px);line-height:1.55;color:var(--mut);max-width:46ch;text-wrap:pretty">Experts, researchers and partners. Mapomo is built with the people who will use it. The Lab convenes in Dakar this September.</p>
+    <p data-reveal="up" data-delay="120" style="margin:0;font-size:clamp(16px,2vw,22px);line-height:1.55;color:var(--mut);max-width:46ch;text-wrap:pretty">Experts, researchers and partners. Mapomo is built with the people who will use it. The first Lab met in Saly in September 2026.</p>
     <div data-reveal="up" data-delay="220" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
       <a href="mailto:contact@mapomo.org" style="display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#0A0F1E;font-weight:700;font-size:clamp(15px,1.6vw,18px);letter-spacing:.01em;border-radius:2px;padding:16px 28px" style-hover="background:#F3CD7C;color:#0A0F1E">contact@mapomo.org<span style="font-family:'IBM Plex Mono',monospace">→</span></a>
       <a href="mailto:contact@mapomo.org?subject=Follow%20the%20build" style="display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;color:var(--txt);border:1px solid var(--line);border-radius:2px;padding:15px 24px" style-hover="border-color:rgba(232,177,60,.5);color:#F3CD7C">FOLLOW THE BUILD</a>
