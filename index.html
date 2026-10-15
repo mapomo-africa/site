@@ -584,7 +584,8 @@ class Mapomo {
     });
     this._io = new IntersectionObserver(entries => {
       entries.forEach(en => {
-        if (!en.isIntersecting) return;
+        // A block taller than the screen can never be 18% visible (the Lab list on a phone): reveal it once it fills a quarter of the view.
+        if (!en.isIntersecting || (en.intersectionRatio < 0.18 && en.intersectionRect.height < 0.25 * (en.rootBounds ? en.rootBounds.height : innerHeight))) return;
         const el = en.target, t = el.dataset.reveal, d = +(el.dataset.delay || 0);
         this._io.unobserve(el);
         requestAnimationFrame(() => {
@@ -594,7 +595,7 @@ class Mapomo {
           if (el.querySelector && el.querySelector('[data-h="den"]') || el.dataset.h === 'den') this.countUp();
         });
       });
-    }, { threshold: 0.18 });
+    }, { threshold: [0, 0.05, 0.1, 0.18] });
     els.forEach(el => this._io.observe(el));
     const denWrap = this.H['den'] && this.H['den'].closest('[data-reveal]');
     if (denWrap) { /* countUp triggered above */ }
